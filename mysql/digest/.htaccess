@@ -1,0 +1,7 @@
+AuthType Digest
+AuthName "Testing digest authentication"
+AuthUserFile /var/www/sqlmap/conf/users.digest
+AuthGroupFile /dev/null
+AuthDigestDomain / https://192.168.1.121/
+AuthDigestProvider file
+Require valid-user

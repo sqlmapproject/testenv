@@ -1,0 +1,5 @@
+AuthType Basic
+AuthName "Testing basic authentication"
+AuthUserFile /var/www/sqlmap/conf/users.basic
+AuthGroupFile /dev/null
+Require valid-user
