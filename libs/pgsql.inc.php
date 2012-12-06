@@ -1,18 +1,4 @@
 <?php
-    /*
-        CREATE TABLE users (
-            id integer,
-            username character(5000),
-            "password" character(1000)
-        );
-
-        INSERT INTO users VALUES (1, 'luther', 'blissett');
-        INSERT INTO users VALUES (2, 'fluffy', 'bunny');
-        INSERT INTO users VALUES (3, 'wu', 'ming');
-        INSERT INTO users VALUES (4, 'sqlmap/0.5 (http://sqlmap.sourceforge.net)', 'user agent header');
-        INSERT INTO users VALUES (5, NULL, 'nameisnull');
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
