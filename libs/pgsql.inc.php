@@ -7,7 +7,7 @@
         // NOTE: it is installed on localhost
         $link = pg_pconnect("host=localhost port=5432 dbname=testdb user=postgres password=testpass");
         if (!$link) {
-            die(pg_error());
+            die(pg_last_error());
         }
 
         // Print results in HTML
@@ -20,7 +20,7 @@
         $result = pg_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". pg_error() . "<br>\n";
+            print "<b>SQL error:</b> ". pg_last_error() . "<br>\n";
             exit(1);
         }
 

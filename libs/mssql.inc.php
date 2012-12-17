@@ -7,13 +7,13 @@
         // NOTE: it is installed on a Windows 2000 VMWare virtual machine
         $link = mssql_pconnect("192.168.1.125", "sa", "testpass");
         if (!$link) {
-            die(mssql_error());
+            die(mssql_get_last_message());
         }
 
         // Make 'master' the current database
         $db_selected = mssql_select_db("master", $link);
         if (!$db_selected) {
-            die (mssql_error());
+            die (mssql_get_last_message());
         }
 
         // Print results in HTML
@@ -26,7 +26,7 @@
         $result = mssql_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". mssql_error() . "<br>\n";
+            print "<b>SQL error:</b> ". mssql_get_last_message() . "<br>\n";
             exit(1);
         }
 
