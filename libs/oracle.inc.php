@@ -5,7 +5,7 @@
     function dbQuery($query) {
         // Connect to the Oracle database management system
         // NOTE: it is installed on localhost
-        $link = oci_pconnect('HR', 'testpass', '//localhost/XE');
+        $link = oci_pconnect('SYS', 'testpass', '//localhost/testdb', null, OCI_SYSDBA);
         if (!$link) {
             die(oci_error());
         }

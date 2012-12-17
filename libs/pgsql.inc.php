@@ -4,7 +4,6 @@
 
     function dbQuery($query) {
         // Connect to the PostgreSQL database management system
-        // NOTE: it is installed on localhost
         $link = pg_pconnect("host=localhost port=5432 dbname=testdb user=postgres password=testpass");
         if (!$link) {
             die(pg_last_error());

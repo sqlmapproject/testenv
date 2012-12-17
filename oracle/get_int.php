@@ -1,6 +1,6 @@
 <?php
     require_once('../libs/oracle.inc.php');
 
-    $query = "SELECT * FROM users WHERE id=" . $_GET['id'];
+    $query = "SELECT * FROM scott.users WHERE id=" . $_GET['id'];
     dbQuery($query);
 ?>

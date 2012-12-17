@@ -11,7 +11,7 @@
         }
 
         // Make 'master' the current database
-        $db_selected = mssql_select_db("master", $link);
+        $db_selected = mssql_select_db("testdb", $link);
         if (!$db_selected) {
             die (mssql_get_last_message());
         }

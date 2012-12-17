@@ -5,13 +5,13 @@
     function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the MySQL database management system
         // NOTE: it is installed on localhost
-        $link = mysql_pconnect("localhost", "testuser", "testpass");
+        $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
             die(mysql_error());
         }
 
-        // Make 'test' the current database
-        $db_selected = mysql_select_db("test");
+        // Make 'testdb' the current database
+        $db_selected = mysql_select_db("testdb");
         if (!$db_selected) {
             die (mysql_error());
         }
