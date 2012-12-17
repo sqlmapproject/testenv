@@ -9,6 +9,6 @@ INSERT INTO `users` (`id`, `name`, `surname`) VALUES
     (1, 'luther', 'blissett'),
     (2, 'fluffy', 'bunny'),
     (3, 'wu', 'ming'),
-    (4, 'sqlmap/1.0-dev (http://sqlmap.org)', 'user agent header');
+    (4, 'sqlmap/1.0-dev (http://sqlmap.org)', 'user agent header'),
     (5, NULL, 'nameisnull');
 
