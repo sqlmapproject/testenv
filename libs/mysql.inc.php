@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the MySQL database management system
         // NOTE: it is installed on localhost
         $link = mysql_pconnect("localhost", "testuser", "testpass");
@@ -26,7 +26,8 @@
         $result = mysql_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
             exit(1);
         }
 
@@ -39,6 +40,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";
