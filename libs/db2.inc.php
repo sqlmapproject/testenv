@@ -1,26 +1,9 @@
 <?php
-    /*
-        CREATE DATABASE testdb;
-        CONNECT TO testdb;
-        
-        CREATE TABLE users (
-            id INTEGER,
-            name VARCHAR(500),
-            surname VARCHAR(1000)
-        );
-
-        INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');
-        INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny');
-        INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming');
-        INSERT INTO users (id, name, surname) VALUES (4, NULL, 'nameisnull');
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
     function dbQuery($query) {
-        // Connect to the DB2 database management system
-        // NOTE: it is installed on localhost
+        // Connect to the IBM DB2 database management system
         $link = db2_pconnect("testdb", "root", "testpass");
         if (!$link) {
             die(db2_conn_errormsg());
@@ -37,7 +20,8 @@
         $result = db2_execute($stmt);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". db2_stmt_errormsg($stmt) . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". db2_stmt_errormsg($stmt) . "<br>\n";
             exit(1);
         }
 
@@ -50,6 +34,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

@@ -1,7 +1,7 @@
 CREATE TABLE users (
-    id int NOT NULL,
-    name varchar(500) default NULL,
-    surname varchar(1000) default NULL,
+    id INTEGER,
+    name CHAR,
+    surname CHAR
 );
 
 INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');

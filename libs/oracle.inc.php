@@ -2,9 +2,9 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the Oracle database management system
-        // NOTE: it is installed on localhost
+
         $link = oci_pconnect('SYS', 'testpass', '//localhost/testdb', null, OCI_SYSDBA);
         if (!$link) {
             die(oci_error());
@@ -26,7 +26,8 @@
         $result = oci_execute($stid, OCI_DEFAULT);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". oci_error() . "<br>\n";
+            if ($show_errors)
+	            print "<b>SQL error:</b> ". oci_error() . "<br>\n";
             exit(1);
         }
 
@@ -39,6 +40,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

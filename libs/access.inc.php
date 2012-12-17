@@ -1,21 +1,8 @@
 <?php
-    /*
-        CREATE TABLE users (
-            id INTEGER,
-            name CHAR,
-            surname CHAR
-        );
-
-        INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');
-        INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny');
-        INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming');
-        INSERT INTO users (id, name, surname) VALUES (4, NULL, 'nameisnull');
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the MS Access Database via ODBC connection (http://www.w3schools.com/PHP/php_db_odbc.asp)
         // NOTE: execute statements from above one at a time because MS Access doesn't support stacked SQL commands
         $link = odbc_connect("testdb", "", "");
@@ -33,7 +20,8 @@
         $result = odbc_exec($link, $query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". odbc_errormsg() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". odbc_errormsg() . "<br>\n";
             exit(1);
         }
 
@@ -46,6 +34,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

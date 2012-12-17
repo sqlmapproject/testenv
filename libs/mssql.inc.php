@@ -2,15 +2,14 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the Microsoft SQL Server database management system
-        // NOTE: it is installed on a Windows 2000 VMWare virtual machine
         $link = mssql_pconnect("192.168.1.125", "sa", "testpass");
         if (!$link) {
             die(mssql_get_last_message());
         }
 
-        // Make 'master' the current database
+        // Make 'testdb' the current database
         $db_selected = mssql_select_db("testdb", $link);
         if (!$db_selected) {
             die (mssql_get_last_message());
@@ -26,7 +25,8 @@
         $result = mssql_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". mssql_get_last_message() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". mssql_get_last_message() . "<br>\n";
             exit(1);
         }
 
@@ -39,6 +39,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

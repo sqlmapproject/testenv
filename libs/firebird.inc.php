@@ -1,27 +1,9 @@
 <?php
-    /*
-        CREATE TABLE users (
-            id INTEGER,
-            name VARCHAR(500),
-            surname VARCHAR(1000)
-        );
-        
-        COMMIT;
-
-        INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');
-        INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny');
-        INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming');
-        INSERT INTO users (id, name, surname) VALUES (4, NULL, 'nameisnull');
-        
-        COMMIT;
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
     function dbQuery($query) {
         // Connect to the Firebird/Interbase Sybase database management system
-        // NOTE: it is installed on localhost
         $link = ibase_pconnect("/opt/firebird/testdb.fdb", "SYSDBA", "testpass");
         if (!$link) {
             die(ibase_errmsg());
@@ -37,7 +19,8 @@
         $result = ibase_query($link, $query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". ibase_errmsg() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". ibase_errmsg() . "<br>\n";
             exit(1);
         }
 
@@ -50,6 +33,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

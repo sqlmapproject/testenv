@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the PostgreSQL database management system
         $link = pg_pconnect("host=localhost port=5432 dbname=testdb user=postgres password=testpass");
         if (!$link) {
@@ -19,7 +19,8 @@
         $result = pg_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". pg_last_error() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". pg_last_error() . "<br>\n";
             exit(1);
         }
 
@@ -32,6 +33,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

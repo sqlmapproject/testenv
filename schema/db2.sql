@@ -1,7 +1,10 @@
+CREATE DATABASE testdb;
+CONNECT TO testdb;
+
 CREATE TABLE users (
-    id int NOT NULL,
-    name varchar(500) default NULL,
-    surname varchar(1000) default NULL,
+    id INTEGER,
+    name VARCHAR(500),
+    surname VARCHAR(1000)
 );
 
 INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');

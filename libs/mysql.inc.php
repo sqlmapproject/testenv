@@ -4,7 +4,6 @@
 
     function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the MySQL database management system
-        // NOTE: it is installed on localhost
         $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
             die(mysql_error());
