@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query, $show_errors=true, $all_results=true) {
+    function dbQuery($query, $show_errors=true, $all_results=true $show_output=true) {
         // Connect to the PostgreSQL database management system
         $link = pg_pconnect("host=localhost port=5432 dbname=testdb user=postgres password=testpass");
         if (!$link) {
