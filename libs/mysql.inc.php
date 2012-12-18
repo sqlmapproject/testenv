@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query, $show_errors=true, $all_results=true) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the MySQL database management system
         $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
@@ -29,6 +29,9 @@
                 print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";

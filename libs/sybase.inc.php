@@ -1,39 +1,10 @@
 <?php
-    /*
-        CREATE DATABASE testdb
-        GO
-
-        USE testdb
-        GO
-
-        CREATE TABLE users (
-            id INTEGER NOT NULL,
-            name VARCHAR(500) DEFAULT NULL NULL,
-            surname VARCHAR(1000) DEFAULT NULL NULL
-        )
-        GO
-
-        INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset')
-        GO
-
-        INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny')
-        GO
-
-        INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming')
-        GO
-
-        INSERT INTO users (id, name, surname) VALUES (4, NULL, 'nameisnull')
-        GO
-
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true) {
         // Connect to the Sybase database management system
-        // NOTE: it is installed on localhost
-        $link = @sybase_pconnect("FILENOTFOUND", "sa", "");
+        $link = @sybase_pconnect("192.168.231.144", "sa", "");
         if (!$link) {
             die(sybase_get_last_message());
         }
@@ -54,9 +25,13 @@
         $result = sybase_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". sybase_get_last_message() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". sybase_get_last_message() . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
@@ -67,6 +42,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

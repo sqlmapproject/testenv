@@ -24,6 +24,9 @@
             exit(1);
         }
 
+        if (!$show_output)
+            exit(1);
+
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 

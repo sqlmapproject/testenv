@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query, $show_errors=true, $all_results=true) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the MS Access Database via ODBC connection (http://www.w3schools.com/PHP/php_db_odbc.asp)
         // NOTE: execute statements from above one at a time because MS Access doesn't support stacked SQL commands
         $link = odbc_connect("testdb", "", "");
@@ -24,6 +24,9 @@
                 print "<b>SQL error:</b> ". odbc_errormsg() . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";

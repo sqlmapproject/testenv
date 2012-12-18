@@ -1,23 +1,8 @@
 <?php
-    /*
-        createdb testdb (from 'Ingres Command Prompt')
-
-        CREATE TABLE users (
-            id INTEGER,
-            name VARCHAR(500),
-            surname VARCHAR(1000)
-        )
-        
-        INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');
-        INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny');
-        INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming');
-        INSERT INTO users (id, name, surname) VALUES (4, NULL, 'nameisnull');
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the Ingres database management system
         $link = ingres_pconnect("testdb", "root", "testpass");
         if (!$link) {
@@ -35,9 +20,13 @@
         $result = ingres_query($query, $link);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". ingres_error() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". ingres_error() . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
@@ -49,6 +38,8 @@
                 print "<td>" . $col_value . "</td>";
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";

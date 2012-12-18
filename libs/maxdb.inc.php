@@ -2,9 +2,9 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the MaxDB database management system
-        $link = maxdb_connect("localhost", "ROOT", "TESTPASS", "testdb"); //implicitly usernames and passwords are all upper case
+        $link = maxdb_connect("localhost", "ROOT", "TESTPASS", "testdb"); // implicitly usernames and passwords are all upper case
         if (!$link) {
             die(maxdb_connect_error());
         }
@@ -23,6 +23,9 @@
                 print "<b>SQL error:</b> ". maxdb_error($link) . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
