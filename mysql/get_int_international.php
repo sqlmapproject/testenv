@@ -1,4 +1,4 @@
-/*
+<pre>
 Used SQL schema:
 
 CREATE TABLE IF NOT EXISTS `international` (
@@ -11,7 +11,8 @@ INSERT INTO `international` (`id`, `name`) VALUES
     (1, CONVERT(0xc5a175c4877572616a USING utf8)),  # Sucuraj in Croatian
     (2, CONVERT(0xe995bfe6b19f USING utf8)),   # Jangtze in Chinese
     (3, CONVERT(0xd180d0b5d0bad0b020d09cd0bed181d0bad0b2d0b0 USING utf8));  # River Moscow in Russian
-*/
+</pre>
+
 <?php
     // Show all PHP error messages
     error_reporting(E_ALL);
