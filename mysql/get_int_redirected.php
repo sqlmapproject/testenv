@@ -1,45 +1,51 @@
 <?php
-    function dbQuery($query) {
+    // Show all PHP error messages
+    error_reporting(E_ALL);
+
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the MySQL database management system
-        // NOTE: it is installed on localhost
-        $link = mysql_pconnect("localhost", "root", "");
+        $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
             die(mysql_error());
         }
 
-        // Make 'test' the current database
+        // Make 'testdb' the current database
         $db_selected = mysql_select_db("testdb");
         if (!$db_selected) {
             die (mysql_error());
         }
 
+        // Print results in HTML
+        print "<html><body>\n";
+
+        // Print SQL query to test sqlmap '--string' command line option
+        //print "<b>SQL query:</b> " . $query . "<br>\n";
+
         // Perform SQL injection affected query
         $result = mysql_query($query);
 
         if (!$result or !mysql_num_rows($result)) {
-            header("Location: .");
-            print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
+            header("Location: /");
+        }
+
+        if (!$show_output)
             exit(1);
-        }
-        else
-        {
-            // Print results in HTML
-            print "<html><body>\n";
-    
-            print "<b>SQL results:</b>\n";
-            print "<table border=\"1\">\n";
-    
-            while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
-                print "<tr>";
-                foreach ($line as $col_value) {
-                    print "<td>" . $col_value . "</td>";
-                }
-                print "</tr>\n";
+
+        print "<b>SQL results:</b>\n";
+        print "<table border=\"1\">\n";
+
+        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            print "<tr>";
+            foreach ($line as $col_value) {
+                print "<td>" . $col_value . "</td>";
             }
-    
-            print "</table>\n";
-            print "</body></html>";
+            print "</tr>\n";
+            if (!$all_results)
+                break;
         }
+
+        print "</table>\n";
+        print "</body></html>";
     }
 
     $query = "SELECT * FROM users WHERE id=" . $_GET['id'] . " LIMIT 0, 1";
