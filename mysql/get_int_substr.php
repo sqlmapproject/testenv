@@ -40,11 +40,7 @@
             print "<tr>";
             $i = 1;
             foreach ($line as $col_value) {
-                if ($i == 1 || $i == 3)
-                    print "<td>" . substr($col_value, 0, 16) . "</td>";
-                else
-                    print "<td>" . $col_value . "</td>";
-                $i += 1;
+                print "<td>" . substr($col_value, 0, 16) . "</td>";
             }
             print "</tr>\n";
             if (!$all_results)
