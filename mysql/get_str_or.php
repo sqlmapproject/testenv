@@ -1,9 +1,6 @@
 <?php
-    require_once('../libs/mysql.noerror.inc.php');
+    require_once('../libs/mysql.inc.php');
 
-    if (strripos($_GET['id'], 'AND ')) {
-    die ("DAMN YOU HACKERS");
-    }
-    $query = "SELECT * FROM users WHERE id='" . $_GET['id'] . "' LIMIT 0, 1";
+    $query = "SELECT * FROM users WHERE name='" . mysql_real_escape_string($_GET['name1']) ."' OR name='" . $_GET['name2'] ."' OR name='" . mysql_real_escape_string($_GET['name3']) ."' LIMIT 0, 1";
     dbQuery($query);
 ?>
