@@ -18,7 +18,7 @@
         }
 
         // Print results in HTML
-        print "<html><body>\n";
+        print "<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=utf8\"></head><body>\n";
 
         // Print SQL query to test sqlmap '--string' command line option
         //print "<b>SQL query:</b> " . $query . "<br>\n";
