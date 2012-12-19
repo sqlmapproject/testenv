@@ -1,30 +1,10 @@
 <?php
-    /*
-        CREATE DATABASE testdb;
-
-        USE testdb;
-
-        CREATE TABLE IF NOT EXISTS `users` (
-            `id` int(11) NOT NULL,
-            `name` varchar(500) default NULL,
-            `surname` varchar(1000) default NULL,
-            PRIMARY KEY  (`id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-        INSERT INTO `users` (`id`, `name`, `surname`) VALUES 
-            (1, 'luther', 'blissett'),
-            (2, 'fluffy', 'bunny'),
-            (3, 'wu', 'ming'),
-            (4, NULL, 'nameisnull');
-    */
-
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the MySQL database management system
-        // NOTE: it is installed on localhost
-        $link = mysql_pconnect("localhost", "root", "");
+        $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
             die(mysql_error());
         }
@@ -45,9 +25,13 @@
         $result = mysql_query($query);
 
         if (!$result) {
-            print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
+            if ($show_errors)
+                print "<b>SQL error:</b> ". mysql_error() . "<br>\n";
             exit(1);
         }
+
+        if (!$show_output)
+            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
@@ -57,22 +41,17 @@
             $i = 1;
             foreach ($line as $col_value) {
                 if ($i == 1 || $i == 3)
-                {
                     print "<td>" . substr($col_value, 0, 16) . "</td>";
-                }
                 else
-                {
                     print "<td>" . $col_value . "</td>";
-                }
                 $i += 1;
             }
             print "</tr>\n";
+            if (!$all_results)
+                break;
         }
 
         print "</table>\n";
         print "</body></html>";
     }
-
-    $query = "SELECT * FROM users WHERE id=" . $_GET['id'] . " LIMIT 0, 1";
-    dbQuery($query);
 ?>
