@@ -1,6 +1,6 @@
 <?php
-    require_once('../libs/oracle_partialunion.inc.php');
+    require_once('../libs/oracle.inc.php');
 
     $query = "SELECT * FROM users WHERE id=" . $_GET['id'];
-    dbQuery($query);
+    dbQuery($query, false, false, true);
 ?>
