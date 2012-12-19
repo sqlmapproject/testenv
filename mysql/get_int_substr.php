@@ -54,4 +54,7 @@
         print "</table>\n";
         print "</body></html>";
     }
+
+    $query = "SELECT * FROM users WHERE id=" . $_GET['id'] . " LIMIT 0, 1";
+    dbQuery($query);
 ?>
