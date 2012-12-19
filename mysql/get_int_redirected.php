@@ -15,18 +15,19 @@
             die (mysql_error());
         }
 
-        // Print results in HTML
-        print "<html><body>\n";
-
-        // Print SQL query to test sqlmap '--string' command line option
-        //print "<b>SQL query:</b> " . $query . "<br>\n";
-
         // Perform SQL injection affected query
         $result = mysql_query($query);
 
         if (!$result or !mysql_num_rows($result)) {
             header("Location: /");
+            exit(1);
         }
+
+        // Print results in HTML
+        print "<html><body>\n";
+
+        // Print SQL query to test sqlmap '--string' command line option
+        //print "<b>SQL query:</b> " . $query . "<br>\n";
 
         if (!$show_output)
             exit(1);
