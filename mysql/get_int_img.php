@@ -1,13 +1,12 @@
 <?php
     function dbQuery($query) {
         // Connect to the MySQL database management system
-        // NOTE: it is installed on localhost
-        $link = mysql_pconnect("localhost", "root", "");
+        $link = mysql_pconnect("localhost", "root", "testpass");
         if (!$link) {
             die(mysql_error());
         }
 
-        // Make 'test' the current database
+        // Make 'testdb' the current database
         $db_selected = mysql_select_db("testdb");
         if (!$db_selected) {
             die (mysql_error());
