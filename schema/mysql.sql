@@ -1,3 +1,7 @@
+CREATE DATABASE testdb;
+
+USE testdb;
+
 CREATE TABLE IF NOT EXISTS `users` (
     `id` int(11) NOT NULL,
     `name` varchar(500) default NULL,

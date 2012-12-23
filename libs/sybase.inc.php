@@ -2,7 +2,7 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query, $show_errors=true, $all_results=true) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the Sybase database management system
         $link = @sybase_pconnect("192.168.231.144", "sa", "");
         if (!$link) {

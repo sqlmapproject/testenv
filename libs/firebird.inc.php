@@ -4,7 +4,7 @@
 
     function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the Firebird/Interbase Sybase database management system
-        $link = ibase_pconnect("/opt/firebird/testdb.fdb", "SYSDBA", "testpass");
+        $link = ibase_pconnect("/var/www/sqlmap/dbs/firebird/testdb.fdb", "SYSDBA", "testpass");
         if (!$link) {
             die(ibase_errmsg());
         }

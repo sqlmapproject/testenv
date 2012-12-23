@@ -2,9 +2,9 @@
     // Show all PHP error messages
     error_reporting(E_ALL);
 
-    function dbQuery($query, $show_errors=true, $all_results=true) {
+    function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the SQLite database file
-        $link = new SQLite3('../dbs/sqlite/testdb.sqlite3');
+        $link = new SQLite3('/var/www/sqlmap/dbs/sqlite/testdb.sqlite3');
 
         if (!$link) {
             die($sqliteerror);
