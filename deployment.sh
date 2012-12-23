@@ -4,10 +4,10 @@ echo "Updating base system"
 aptitude update
 aptitude full-upgrade
 
-echo "Installing Apache, PHP and git"
+echo "Installing Apache, PHP, git and generic PHP modules"
 aptitude install apache2 libapache2-mod-php5 git php5-mysql php5-pgsql php5-dev php5-gd php-pear
 
-echo "Configure Apache"
+echo "Configuring Apache"
 rm /var/www/index.html
 mkdir /var/www/test
 chmod 777 /var/www/test
