@@ -2,5 +2,5 @@
     require_once('../libs/oracle.inc.php');
 
     $query = "SELECT * FROM scott.users WHERE id=" . $_GET['id'];
-    dbQuery($query, false, false, true);
+    dbQuery($query, false, true, false);
 ?>
