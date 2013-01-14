@@ -83,7 +83,7 @@ echo "Patching ~/.bashrc"
 cat << EOF >> ~/.bashrc
 
 alias mysqlconn='mysql -u root -p testdb'
-alias pgsqlconn='psql -h 127.0.0.1 -p 5432 -U testuser -W testdb'
+alias pgsqlconn='psql -h 127.0.0.1 -p 5432 -U postgres -W testdb'
 alias sqliteconn='sqlite /var/www/sqlmap/dbs/sqlite/testdb.sqlite'
 alias sqlite3conn='sqlite3 /var/www/sqlmap/dbs/sqlite/testdb.sqlite3'
 alias firebirdconn='isql-fb -u SYSDBA -p testpass /var/www/sqlmap/dbs/firebird/testdb.fdb'
@@ -91,3 +91,5 @@ alias oracleconn='sqlplus SYS/testpass@//127.0.0.1:1521/testdb AS SYSDBA'
 alias oracleconnscott='sqlplus SCOTT/testpass@//127.0.0.1:1521/testdb'
 alias upgradeall='aptitude update && aptitude -y full-upgrade && aptitude clean && sync'
 EOF
+source ~/.bashrc
+
