@@ -4,7 +4,7 @@
 
     function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the Oracle database management system
-        $link = oci_pconnect('SYS', 'testpass', '//localhost/testdb', null, OCI_SYSDBA);
+        $link = oci_pconnect('SYS', 'testpass', '//localhost/XE', null, OCI_SYSDBA);
         if (!$link) {
             die(oci_error());
         }
