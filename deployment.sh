@@ -14,6 +14,7 @@ chmod 777 /var/www/test
 a2enmod auth_basic auth_digest
 sed -i 's/AllowOverride None/AllowOverride AuthConfig/' /etc/apache2/sites-enabled/*
 sed -i 's/magic_quotes_gpc = On/magic_quotes_gpc = Off/g' /etc/php5/*/php.ini
+sed -i 's/extension=suhosin.so/;extension=suhosin.so/g' /etc/php5/conf.d/suhosin.ini
 update-rc.d apache2 defaults
 
 echo "### Donwloading sqlmap test environment to /var/www"
