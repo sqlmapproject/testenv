@@ -7,12 +7,13 @@ aptitude full-upgrade
 echo "### Installing Apache, PHP, git and generic PHP modules"
 aptitude install apache2 libapache2-mod-php5 git php5-dev php5-gd php-pear php5-mysql php5-pgsql php5-sqlite php5-interbase php5-sybase php5-odbc libmdbodbc unzip make libaio1 bc screen
 
-echo "### Configuring Apache"
+echo "### Configuring Apache and PHP"
 rm /var/www/index.html
 mkdir /var/www/test
 chmod 777 /var/www/test
 a2enmod auth_basic auth_digest
 sed -i 's/AllowOverride None/AllowOverride AuthConfig/' /etc/apache2/sites-enabled/*
+sed -i 's/magic_quotes_gpc = On/magic_quotes_gpc = Off/g' /etc/php5/*/php.ini
 update-rc.d apache2 defaults
 
 echo "### Donwloading sqlmap test environment to /var/www"
