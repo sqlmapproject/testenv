@@ -105,11 +105,13 @@ cat << EOF >> /etc/profile
 
 # Oracle
 export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export ORACLE_SID=XE
 export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/
 
 # IBM DB2
 export IBM_DB_HOME=/opt/ibm/db2/V9.5/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
 EOF
 
 source /etc/profile
