@@ -31,7 +31,7 @@
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 
-        while ($line = db2_fetch_assoc($result)) {
+        while ($line = db2_fetch_array($stmt)) {
             print "<tr>";
             foreach ($line as $col_value) {
                 print "<td>" . $col_value . "</td>";
