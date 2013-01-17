@@ -107,11 +107,13 @@ cat << EOF >> /etc/profile
 export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export ORACLE_SID=XE
-export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/
 
 # IBM DB2
 export IBM_DB_HOME=/opt/ibm/db2/V9.5/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
+
+# PATH
+export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/:/opt/ibm/db2/V9.5/bin/
 EOF
 
 source /etc/profile
@@ -164,11 +166,12 @@ cat << EOF >> ~/.bashrc
 
 alias mysqlconn='mysql -u root -p testdb'
 alias pgsqlconn='psql -h 127.0.0.1 -p 5432 -U postgres -W testdb'
+alias oracleconn='sqlplus SYS/testpass@//127.0.0.1:1521/XE AS SYSDBA'
+alias oracleconnscott='sqlplus SCOTT/testpass@//127.0.0.1:1521/XE'
+alias db2conn='db2'
 alias sqliteconn='sqlite /var/www/sqlmap/dbs/sqlite/testdb.sqlite'
 alias sqlite3conn='sqlite3 /var/www/sqlmap/dbs/sqlite/testdb.sqlite3'
 alias firebirdconn='isql-fb -u SYSDBA -p testpass /var/www/sqlmap/dbs/firebird/testdb.fdb'
-alias oracleconn='sqlplus SYS/testpass@//127.0.0.1:1521/XE AS SYSDBA'
-alias oracleconnscott='sqlplus SCOTT/testpass@//127.0.0.1:1521/XE'
 
 alias upgradeall='aptitude update && aptitude -y full-upgrade && aptitude clean && sync'
 EOF
