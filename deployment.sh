@@ -14,6 +14,7 @@ chmod 777 /var/www/test
 a2enmod auth_basic auth_digest
 sed -i 's/AllowOverride None/AllowOverride AuthConfig/' /etc/apache2/sites-enabled/*
 sed -i 's/magic_quotes_gpc = On/magic_quotes_gpc = Off/g' /etc/php5/*/php.ini
+sed -i 's/extension=suhosin.so/;extension=suhosin.so/g' /etc/php5/conf.d/suhosin.ini
 update-rc.d apache2 defaults
 
 echo "### Donwloading sqlmap test environment to /var/www"
@@ -37,7 +38,6 @@ echo "### Initializing PostgreSQL test database and table"
 echo "### NOTE: when asked for a password, type 'testpass'"
 echo "Now type: ALTER USER postgres WITH PASSWORD 'testpass', hit RETURN, type \q, hit RETURN"
 su postgres -c psql
-rm -f /tmp/pgsql.sql
 passwd -d postgres
 su postgres -c passwd
 psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE testdb;"
@@ -106,6 +106,16 @@ SHUTDOWN immediate;
 STARTUP;
 EOF
 service oracle-xe restart
+
+echo "### Download IBM DB2 trial from IBM software portal, http://www14.software.ibm.com/webapp/download/preconfig.jsp?id=2007-10-30+16%3A22%3A45.136755R&S_TACT=&S_CMP= and install it"
+echo "### An how-to can be found on http://edin.no-ip.com/blog/hswong3i/ibm-db2-v9-7-apache-2-2-php5-3-debian-squeeze-howto"
+echo "### Hit ENTER when you have done it"
+read enter
+
+echo "### Configuring PHP for IBM DB2"
+echo "### NOTE: when asked for the DB2 installation directory, provide <TODO>"
+pecl install ibm_db2
+echo "extension=ibm_db2.so" > /etc/php5/conf.d/oracle.ini
 
 echo "### Restarting Apache web server"
 service apache2 restart

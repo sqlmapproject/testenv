@@ -25,8 +25,10 @@
         $result = oci_execute($stid, OCI_DEFAULT);
 
         if (!$result) {
-            if ($show_errors)
-	            print "<b>SQL error:</b> ". oci_error() . "<br>\n";
+            if ($show_errors) {
+                $e = oci_error($stid);
+                print "<b>SQL error:</b> ". $e['message'] . "<br>\n";
+            }
             exit(1);
         }
 
