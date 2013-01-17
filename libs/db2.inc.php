@@ -4,7 +4,7 @@
 
     function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
         // Connect to the IBM DB2 database management system
-        $link = db2_pconnect("testdb", "root", "testpass");
+        $link = db2_pconnect("testdb", "db2inst1", "testpass");
         if (!$link) {
             die(db2_conn_errormsg());
         }
