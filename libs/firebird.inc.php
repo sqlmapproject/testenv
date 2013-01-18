@@ -24,13 +24,14 @@
             exit(1);
         }
 
-        if (!$show_output)
-            exit(1);
-
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 
         while ($line = ibase_fetch_assoc($result)) {
+            // This must stay here for Firebird
+            if (!$show_output)
+                exit(1);
+
             print "<tr>";
             foreach ($line as $col_value) {
                 print "<td>" . $col_value . "</td>";
