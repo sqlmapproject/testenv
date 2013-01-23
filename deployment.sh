@@ -112,8 +112,12 @@ export ORACLE_SID=XE
 export IBM_DB_HOME=/opt/ibm/db2/V9.5
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
 
+# IBM Informix
+export INFORMIX_HOME=/opt/IBM/informix
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INFORMIX_HOME/lib
+
 # PATH
-export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/:/opt/ibm/db2/V9.5/bin/
+export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin:/opt/ibm/db2/V9.5/bin:/opt/IBM/informix/bin
 EOF
 
 source /etc/profile
@@ -155,7 +159,7 @@ echo "### NOTE: when asked for the DB2 installation directory, provide <TODO>"
 pecl install ibm_db2
 echo "extension=ibm_db2.so" > /etc/php5/conf.d/db2.ini
 
-echo "### Downloading Informix"
+echo "### Downloading IBM Informix"
 cd /tmp
 wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.b8S61sgMER4Xv-OZtTA_T2rbXlP3haBaZHqUsM_qyQ/Xc.iif.11.70.UC7DE.Linux-RHEL5.tar/Xd./Xf.LPr.D1vk/Xg.6871728/Xi.ifxids/XY.regsrvs/XZ.g9hQ35T595nVz7Ids2e0cBZguOE/iif.11.70.UC7DE.Linux-RHEL5.tar
 tar xvf iif.11.70.UC7DE.Linux-RHEL5.tar
@@ -163,7 +167,9 @@ chmod +x ids_install
 echo "### NOTE: when asked for a password, type 'testpass'"
 ./ids_install
 
-# TODO: configure PHP driver for Informix
+# TODO: configure PHP driver for IBM Informix
+
+# TODO: Add Ingres
 
 echo "### Restarting Apache web server (following installation and setup of PHP modules)"
 service apache2 restart
