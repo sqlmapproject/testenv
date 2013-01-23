@@ -155,6 +155,16 @@ echo "### NOTE: when asked for the DB2 installation directory, provide <TODO>"
 pecl install ibm_db2
 echo "extension=ibm_db2.so" > /etc/php5/conf.d/db2.ini
 
+echo "### Downloading Informix"
+cd /tmp
+wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.b8S61sgMER4Xv-OZtTA_T2rbXlP3haBaZHqUsM_qyQ/Xc.iif.11.70.UC7DE.Linux-RHEL5.tar/Xd./Xf.LPr.D1vk/Xg.6871728/Xi.ifxids/XY.regsrvs/XZ.g9hQ35T595nVz7Ids2e0cBZguOE/iif.11.70.UC7DE.Linux-RHEL5.tar
+tar xvf iif.11.70.UC7DE.Linux-RHEL5.tar
+chmod +x ids_install
+echo "### NOTE: when asked for a password, type 'testpass'"
+./ids_install
+
+# TODO: configure PHP driver for Informix
+
 echo "### Restarting Apache web server (following installation and setup of PHP modules)"
 service apache2 restart
 
