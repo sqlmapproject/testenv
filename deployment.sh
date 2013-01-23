@@ -104,12 +104,12 @@ echo "### Patching /etc/profile with Oracle related variables"
 cat << EOF >> /etc/profile
 
 # Oracle
-export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/
+export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export ORACLE_SID=XE
 
 # IBM DB2
-export IBM_DB_HOME=/opt/ibm/db2/V9.5/
+export IBM_DB_HOME=/opt/ibm/db2/V9.5
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
 
 # PATH
@@ -172,6 +172,16 @@ alias db2conn='db2'
 alias sqliteconn='sqlite /var/www/sqlmap/dbs/sqlite/testdb.sqlite'
 alias sqlite3conn='sqlite3 /var/www/sqlmap/dbs/sqlite/testdb.sqlite3'
 alias firebirdconn='isql-fb -u SYSDBA -p testpass /var/www/sqlmap/dbs/firebird/testdb.fdb'
+
+alias mysqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d mysql://root:testpass@127.0.0.1:3306/testdb --sql-shell -v 6'
+alias pgsqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d postgresql://postgres:testpass@127.0.0.1:5432/testdb --sql-shell -v 6'
+alias oracleconnsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SYS:testpass@127.0.0.1:1521/XE --sql-shell -v 6'
+alias oracleconnscottsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SCOTT:testpass@127.0.0.1:1521/XE --sql-shell -v 6'
+alias db2connsqlmap='python /opt/sqlmap/sqlmap.py -d db2://db2inst1:testpass@127.0.0.1:50000/testdb --sql-shell -v 6'
+alias sqliteconnsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite:///var/www/sqlmap/dbs/sqlite/testdb.sqlite --sql-shell -v 6'
+alias sqlite3connsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite3:///var/www/sqlmap/dbs/sqlite/testdb.sqlite3 --sql-shell -v 6'
+alias firebirdconnsqlmap='python /opt/sqlmap/sqlmap.py -d firebird://SYSDBA:testpass@/var/www/sqlmap/dbs/firebird/testdb.fdb --sql-shell -v 6'
+alias accessconnsqlmap='python /opt/sqlmap/sqlmap.py -d access:///var/www/sqlmap/dbs/access/testdb.mdb --sql-shell -v 6'
 
 alias upgradeall='aptitude update && aptitude -y full-upgrade && aptitude clean && sync'
 EOF
