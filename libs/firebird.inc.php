@@ -1,8 +1,10 @@
 <?php
-    // Show all PHP error messages
-    error_reporting(E_ALL);
-
     function dbQuery($query, $show_errors=true, $all_results=true, $show_output=true) {
+        if ($show_errors)
+            error_reporting(E_ALL);
+        else
+            error_reporting(E_PARSE);
+
         // Connect to the Firebird/Interbase Sybase database management system
         $link = ibase_pconnect("/var/www/sqlmap/dbs/firebird/testdb.fdb", "SYSDBA", "testpass");
         if (!$link) {
