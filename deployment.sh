@@ -113,11 +113,14 @@ export IBM_DB_HOME=/opt/ibm/db2/V9.5
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
 
 # IBM Informix
-export INFORMIX_HOME=/opt/IBM/informix
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INFORMIX_HOME/lib
+export INFORMIXDIR=/opt/IBM/informix
+export INFORMIXSERVER=ol_informix1170
+export ONCONFIG=onconfig.ol_informix1170
+export INFORMIXSQLHOSTS=/opt/IBM/informix/etc/sqlhosts.ol_informix1170
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INFORMIXDIR/lib
 
 # PATH
-export PATH=\$PATH:/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin:/opt/ibm/db2/V9.5/bin:/opt/IBM/informix/bin
+export PATH=\$PATH:${ORACLE_HOME}/bin:${IBM_DB_HOME}/bin:${INFORMIXDIR}/bin:${INFORMIXDIR}/extend/krakatoa/jre/bin
 EOF
 
 source /etc/profile
@@ -155,19 +158,40 @@ echo "### Hit ENTER when you have done it"
 read enter
 
 echo "### Configuring PHP for IBM DB2"
-echo "### NOTE: when asked for the DB2 installation directory, provide <TODO>"
+echo "### NOTE: when asked for the DB2 installation directory, provide /opt/ibm/db2/V9.5"
 pecl install ibm_db2
 echo "extension=ibm_db2.so" > /etc/php5/conf.d/db2.ini
 
-echo "### Downloading IBM Informix"
+echo "### Downloading IBM Informix (client, server)"
 cd /tmp
 wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.b8S61sgMER4Xv-OZtTA_T2rbXlP3haBaZHqUsM_qyQ/Xc.iif.11.70.UC7DE.Linux-RHEL5.tar/Xd./Xf.LPr.D1vk/Xg.6871728/Xi.ifxids/XY.regsrvs/XZ.g9hQ35T595nVz7Ids2e0cBZguOE/iif.11.70.UC7DE.Linux-RHEL5.tar
 tar xvf iif.11.70.UC7DE.Linux-RHEL5.tar
 chmod +x ids_install
 echo "### NOTE: when asked for a password, type 'testpass'"
 ./ids_install
+# NOTE: in recent versions, client SDK is part of the server installer
+#wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.YBTN_DlRQVtTQcv6rNBKpda1x-zsBonq_4dH2lYTYQ/Xc.clientsdk.3.70.UC5DE.LINUX.tar/Xd./Xf.LPr.D1vk/Xg.6872524/Xi.ifxdl/XY.regsrvs/XZ._9ztqA4zY_TE9mCBH0YaP9Gkl5k/clientsdk.3.70.UC5DE.LINUX.tar
+#tar xvf clientsdk.3.70.UC5DE.LINUX.tar
+#./installclientsdk
+ln -fs /opt/IBM/informix/etc/sqlhosts.ol_informix1170 /opt/IBM/informix/etc/sqlhosts
+ln -fs /opt/IBM/informix/etc/onconfig.ol_informix1170 /opt/IBM/informix/etc/onconfig
+echo "FULL_DISK_INIT 1" >> /opt/IBM/informix/etc/onconfig
+onclean -ky
+oninit -iyv
 
-# TODO: configure PHP driver for IBM Informix
+echo "### Configuring PHP for IBM DB2"
+echo "### NOTE: when asked for the DB2 installation directory, provide /opt/IBM/informix"
+aptitude install php5-dev re2c
+cd /tmp
+wget http://pecl.php.net/get/PDO_INFORMIX-1.3.0.tgz
+tar xvfz PDO_INFORMIX-1.3.0.tgz
+cd PDO_INFORMIX-1.3.0
+phpize
+ln -s /usr/include/php5 /usr/include/php
+./configure
+make
+make install
+echo "extension=pdo_informix.so" > /etc/php5/conf.d/pdo_informix.ini
 
 # TODO: Add Ingres
 
