@@ -5,16 +5,16 @@
         else
             error_reporting(E_PARSE);
 
-        // Connect to the Sybase database management system
-        $link = @sybase_pconnect("192.168.231.144", "sa", "testpass");
+        // Connect to the Microsoft SQL Server database management system
+        $link = mssql_pconnect("192.168.1.125", "testuser", "testpass");
         if (!$link) {
-            die(sybase_get_last_message());
+            die(mssql_get_last_message());
         }
 
         // Make 'testdb' the current database
-        $db_selected = @sybase_select_db("testdb");
+        $db_selected = mssql_select_db("testdb", $link);
         if (!$db_selected) {
-            die (sybase_get_last_message());
+            die (mssql_get_last_message());
         }
 
         // Print results in HTML
@@ -24,11 +24,11 @@
         //print "<b>SQL query:</b> " . $query . "<br>\n";
 
         // Perform SQL injection affected query
-        $result = sybase_query($query);
+        $result = mssql_query($query);
 
         if (!$result) {
             if ($show_errors)
-                print "<b>SQL error:</b> ". sybase_get_last_message() . "<br>\n";
+                print "<b>SQL error:</b> ". mssql_get_last_message() . "<br>\n";
             exit(1);
         }
 
@@ -38,7 +38,7 @@
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 
-        while ($line = sybase_fetch_assoc($result)) {
+        while ($line = mssql_fetch_array($result, MSSQL_ASSOC)) {
             print "<tr>";
             foreach ($line as $col_value) {
                 print "<td>" . $col_value . "</td>";

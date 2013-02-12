@@ -5,16 +5,10 @@
         else
             error_reporting(E_PARSE);
 
-        // Connect to the Sybase database management system
-        $link = @sybase_pconnect("192.168.231.144", "sa", "testpass");
+        // Connect to the PostgreSQL database management system
+        $link = pg_pconnect("host=localhost port=5432 dbname=testdb user=testuser password=testpass");
         if (!$link) {
-            die(sybase_get_last_message());
-        }
-
-        // Make 'testdb' the current database
-        $db_selected = @sybase_select_db("testdb");
-        if (!$db_selected) {
-            die (sybase_get_last_message());
+            die(pg_last_error());
         }
 
         // Print results in HTML
@@ -24,11 +18,11 @@
         //print "<b>SQL query:</b> " . $query . "<br>\n";
 
         // Perform SQL injection affected query
-        $result = sybase_query($query);
+        $result = pg_query($query);
 
         if (!$result) {
             if ($show_errors)
-                print "<b>SQL error:</b> ". sybase_get_last_message() . "<br>\n";
+                print "<b>SQL error:</b> ". pg_last_error() . "<br>\n";
             exit(1);
         }
 
@@ -38,7 +32,7 @@
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 
-        while ($line = sybase_fetch_assoc($result)) {
+        while ($line = pg_fetch_array($result, null, PGSQL_ASSOC)) {
             print "<tr>";
             foreach ($line as $col_value) {
                 print "<td>" . $col_value . "</td>";

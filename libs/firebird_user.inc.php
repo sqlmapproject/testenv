@@ -5,16 +5,10 @@
         else
             error_reporting(E_PARSE);
 
-        // Connect to the Sybase database management system
-        $link = @sybase_pconnect("192.168.231.144", "sa", "testpass");
+        // Connect to the Firebird/Interbase Sybase database management system
+        $link = ibase_pconnect("/var/www/sqlmap/dbs/firebird/testdb.fdb", "testuser", "testpass");
         if (!$link) {
-            die(sybase_get_last_message());
-        }
-
-        // Make 'testdb' the current database
-        $db_selected = @sybase_select_db("testdb");
-        if (!$db_selected) {
-            die (sybase_get_last_message());
+            die(ibase_errmsg());
         }
 
         // Print results in HTML
@@ -24,21 +18,22 @@
         //print "<b>SQL query:</b> " . $query . "<br>\n";
 
         // Perform SQL injection affected query
-        $result = sybase_query($query);
+        $result = ibase_query($link, $query);
 
         if (!$result) {
             if ($show_errors)
-                print "<b>SQL error:</b> ". sybase_get_last_message() . "<br>\n";
+                print "<b>SQL error:</b> ". ibase_errmsg() . "<br>\n";
             exit(1);
         }
-
-        if (!$show_output)
-            exit(1);
 
         print "<b>SQL results:</b>\n";
         print "<table border=\"1\">\n";
 
-        while ($line = sybase_fetch_assoc($result)) {
+        while ($line = ibase_fetch_assoc($result)) {
+            // This must stay here for Firebird
+            if (!$show_output)
+                exit(1);
+
             print "<tr>";
             foreach ($line as $col_value) {
                 print "<td>" . $col_value . "</td>";
