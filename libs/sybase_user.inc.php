@@ -6,7 +6,7 @@
             error_reporting(E_PARSE);
 
         // Connect to the Sybase database management system
-        $link = @sybase_pconnect("192.168.231.144", "sa", "testpass");
+        $link = @sybase_pconnect("192.168.231.144", "testuser", "testpass");
         if (!$link) {
             die(sybase_get_last_message());
         }
