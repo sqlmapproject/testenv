@@ -38,3 +38,10 @@ INSERT INTO `data` (`id`, `content`) VALUES
     (2, LOAD_FILE('/usr/bin/yes')),
     (3, LOAD_FILE('/usr/bin/volname'));
 
+CREATE USER 'testuser'@'%' identified by 'testpass';
+
+USE mysql;
+
+UPDATE USER SET host='%' WHERE user='root' AND host='localhost';
+GRANT SELECT ON testdb.* TO 'testuser'@'%';
+
