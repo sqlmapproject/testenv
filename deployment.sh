@@ -32,6 +32,7 @@ update-rc.d mysql defaults
 echo "### Initializing MySQL test database and table"
 echo "### NOTE: when asked for a password, type 'testpass'"
 mysql -u root -p mysql < /var/www/sqlmap/schema/mysql.sql 
+sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/g' /etc/mysql/my.cnf
 
 echo "### Installing PostgreSQL database management system (clients, server, libraries)"
 aptitude install postgresql-client postgresql postgresql-server-dev-all libpq-dev 
@@ -45,6 +46,9 @@ passwd -d postgres
 su postgres -c passwd
 psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE testdb;"
 psql -U postgres -h 127.0.0.1 -d testdb -f /var/www/sqlmap/schema/pgsql.sql
+echo "host    all         all         0.0.0.0/0          md5" >> /etc/postgresql/8.4/main/pg_hba.conf
+sed -i "s/listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/8.4/main/postgresql.conf
+sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/8.4/main/postgresql.conf
 
 echo "### Initializing Microsoft Access ODBC driver"
 cat << EOF > /etc/odbc.ini
@@ -194,6 +198,28 @@ make install
 echo "extension=pdo_informix.so" > /etc/php5/conf.d/pdo_informix.ini
 
 # TODO: Add Ingres
+
+echo "### Starting DBMS at boot"
+cat << EOF > /etc/rc.local
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Start IBM DB2 at boot
+su -c /home/db2inst1/sqllib/adm/db2start db2inst1
+
+# Start IBM Informix at boot
+oninit -v
+exit 0
 
 echo "### Restarting Apache web server (following installation and setup of PHP modules)"
 service apache2 restart
