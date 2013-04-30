@@ -218,7 +218,7 @@ cat << EOF > /etc/rc.local
 su -c /home/db2inst1/sqllib/adm/db2start db2inst1
 
 # Start IBM Informix at boot
-oninit -v
+/opt/IBM/informix/bin/oninit -v
 exit 0
 
 echo "### Restarting Apache web server (following installation and setup of PHP modules)"
