@@ -32,9 +32,7 @@ public class ViewRecords extends HttpServlet {
 		PrintWriter out=response.getWriter();
 		try {
 			String name = request.getParameter("name");
-			PreparedStatement pst=con.prepareStatement("select * from contacts where name='" + name + "'");
-			pst.clearParameters();
-			ResultSet rs=pst.executeQuery();
+			ResultSet rs =con.createStatement().executeQuery("select * from contacts where name='" + name + "'");
 			while(rs.next()){
 				out.write("<br/>"+rs.getString(1));
 				out.write(", "+rs.getString(2));
