@@ -20,7 +20,7 @@ public class Register extends HttpServlet {
 			e.printStackTrace(System.out);
 		}
 		try {
-			con=DriverManager.getConnection("jdbc:hsqldb:hsqldb-1_7_2/","SA","");
+			con=DriverManager.getConnection("jdbc:hsqldb:hsqldb-1_7_2","SA","");
 			con.createStatement().executeUpdate("create table contacts (name varchar(45),email varchar(45),phone varchar(45))");
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
