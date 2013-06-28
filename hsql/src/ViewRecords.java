@@ -22,7 +22,7 @@ public class ViewRecords extends HttpServlet {
 			e.printStackTrace(System.out);
 		}
 		try {
-			con=DriverManager.getConnection("jdbc:hsqldb:mydatabase","SA","");
+			con=DriverManager.getConnection("CONSTRING","SA","");
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
 		}
