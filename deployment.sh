@@ -201,42 +201,41 @@ echo "extension=pdo_informix.so" > /etc/php5/conf.d/pdo_informix.ini
 # HSQL - Apache Tomcat
 echo "### Downloading and deploying Tomcat for HSQL Website"
 cd /tmp
-wget http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v7.0.41/bin/apache-tomcat-7.0.41.tar.gz
-tar xzf apache-tomcat-7.0.41.tar.gz
-mv /tmp/apache-tomcat-7.0.41/ /opt/tomcat
-cp -r /var/www/sqlmap/hsql/ /opt/tomcat/webapps/hsql_1_7_2
-cp -r /var/www/sqlmap/hsql/ /opt/tomcat/webapps/hsql_2_2_9
+apt-get install tomcat7
+chown -R tomcat7 /var/lib/tomcat7/
+cp -r /var/www/sqlmap/hsql/ /var/lib/tomcat7/webapps/hsql_1_7_2
+cp -r /var/www/sqlmap/hsql/ /var/lib/tomcat7/webapps/hsql_2_2_9
 
 echo "### Compiling Java for HSQL Website"
-mkdir /opt/tomcat/webapps/hsql_1_7_2/WEB-INF/classes/
-javac -classpath /opt/tomcat/lib/servlet-api.jar /var/www/sqlmap/hsql/src/*.java
-mv -f /var/www/sqlmap/hsql/src/*.class /opt/tomcat/webapps/hsql_1_7_2/WEB-INF/classes/.
+mkdir /var/lib/tomcat7/webapps/hsql_1_7_2/WEB-INF/classes/
+javac -classpath /usr/share/tomcat7/lib/servlet-api.jar /var/www/sqlmap/hsql/src/*.java
+mv -f /var/www/sqlmap/hsql/src/*.class /var/lib/tomcat7/webapps/hsql_1_7_2/WEB-INF/classes/.
 
 # Replace the connection class name and database name for different versions
-mkdir /opt/tomcat/webapps/hsql_2_2_9/WEB-INF/classes/
+mkdir /var/lib/tomcat7/webapps/hsql_2_2_9/WEB-INF/classes/
 sed -i -e 's/org.hsqldb.jdbcDriver/org.hsqldb.jdbc.JDBCDriver/' /var/www/sqlmap/hsql/src/Register.java
 sed -i -e 's/org.hsqldb.jdbcDriver/org.hsqldb.jdbc.JDBCDriver/' /var/www/sqlmap/hsql/src/ViewRecords.java
 sed -i -e 's/jdbc:hsqldb:hsqldb-1_7_2/jdbc:hsqldb:hsqldb-2_2_9/' /var/www/sqlmap/hsql/src/Register.java
 sed -i -e 's/jdbc:hsqldb:hsqldb-1_7_2/jdbc:hsqldb:hsqldb-2_2_9/' /var/www/sqlmap/hsql/src/ViewRecords.java
-javac -classpath /opt/tomcat/lib/servlet-api.jar /var/www/sqlmap/hsql/src/*.java
-mv -f /var/www/sqlmap/hsql/src/*.class /opt/tomcat/webapps/hsql_2_2_9/WEB-INF/classes/.
+javac -classpath /usr/share/tomcat7/lib/servlet-api.jar /var/www/sqlmap/hsql/src/*.java
+mv -f /var/www/sqlmap/hsql/src/*.class /var/lib/tomcat7/webapps/hsql_2_2_9/WEB-INF/classes/.
 
 echo "### Downloading HSQL 1.7.2.11"
 wget http://kent.dl.sourceforge.net/project/hsqldb/hsqldb/hsqldb_1_7_2/hsqldb_1_7_2_11.zip
 unzip -q hsqldb_1_7_2_11.zip
-mkdir /opt/tomcat/webapps/hsql_1_7_2/WEB-INF/lib/
-mv -f /tmp/hsqldb/lib/hsqldb.jar /opt/tomcat/webapps/hsql_1_7_2/WEB-INF/lib/.
-rm -rf hsqldb
+mkdir /var/lib/tomcat7/webapps/hsql_1_7_2/WEB-INF/lib/
+mv -f /tmp/hsqldb/lib/hsqldb.jar /var/lib/tomcat7/webapps/hsql_1_7_2/WEB-INF/lib/.
+rm -rf hsqldb*
 
 echo "### Downloading HSQL 2.2.9"
 wget http://kent.dl.sourceforge.net/project/hsqldb/hsqldb/hsqldb_2_2/hsqldb-2.2.9.zip
 unzip -q hsqldb-2.2.9.zip
-mkdir /opt/tomcat/webapps/hsql_2_2_9/WEB-INF/lib/
-mv -f /tmp/hsqldb-2.2.9/hsqldb/lib/hsqldb.jar /opt/tomcat/webapps/hsql_2_2_9/WEB-INF/lib/.
-rm -rf hsqldb
+mkdir /var/lib/tomcat7/webapps/hsql_2_2_9/WEB-INF/lib/
+mv -f /tmp/hsqldb-2.2.9/hsqldb/lib/hsqldb.jar /var/lib/tomcat7/webapps/hsql_2_2_9/WEB-INF/lib/.
+rm -rf hsqldb*
 
-echo "Starting Tomcat"
-/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh
+echo "### Restarting Tomcat"
+/etc/init.d/tomcat7 restart
 
 echo "### Starting DBMS at boot"
 cat << EOF > /etc/rc.local

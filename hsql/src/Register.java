@@ -17,13 +17,13 @@ public class Register extends HttpServlet {
 		try {
 			Class.forName("org.hsqldb.jdbcDriver");
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace(System.out);
+			throw new ServletException(e);
 		}
 		try {
 			con=DriverManager.getConnection("jdbc:hsqldb:hsqldb-1_7_2","SA","");
 			con.createStatement().executeUpdate("create table contacts (name varchar(45),email varchar(45),phone varchar(45))");
 		} catch (SQLException e) {
-			e.printStackTrace(System.out);
+			throw new ServletException(e);
 		}
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,7 +41,7 @@ public class Register extends HttpServlet {
 			int i=pst.executeUpdate();
 			out.write(i+" records inserted, <a href='ViewRecords?name=" + name + "'>View Records</a>");
 		} catch (SQLException e) {
-			e.printStackTrace(System.out);
+			throw new ServletException(e);
 		}
 	}
 }
