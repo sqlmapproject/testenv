@@ -15,12 +15,12 @@ public class Register extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		try {
-			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			Class.forName("org.hsqldb.jdbcDriver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace(System.out);
 		}
 		try {
-			con=DriverManager.getConnection("CONSTRING","SA","");
+			con=DriverManager.getConnection("jdbc:hsqldb:hsqldb-1_7_2/","SA","");
 			con.createStatement().executeUpdate("create table contacts (name varchar(45),email varchar(45),phone varchar(45))");
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
@@ -39,7 +39,7 @@ public class Register extends HttpServlet {
 			pst.setString(2, email);
 			pst.setString(3, phone);
 			int i=pst.executeUpdate();
-			out.write(i+" records inserted, <a href='ViewRecords?name='>View Records</a>");
+			out.write(i+" records inserted, <a href='ViewRecords?name=" + name + "'>View Records</a>");
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
 		}
