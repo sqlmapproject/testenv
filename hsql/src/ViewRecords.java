@@ -17,12 +17,12 @@ public class ViewRecords extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		try {
-			Class.forName("org.hsqldb.jdbc.JDBCDriver");
+			Class.forName("org.hsqldb.jdbcDriver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace(System.out);
 		}
 		try {
-			con=DriverManager.getConnection("CONSTRING","SA","");
+			con=DriverManager.getConnection("jdbc:hsqldb:hsqldb-1_7_2","SA","");
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
 		}
