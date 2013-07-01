@@ -218,7 +218,7 @@ sed -i -e 's/org.hsqldb.jdbcDriver/org.hsqldb.jdbc.JDBCDriver/' /var/www/sqlmap/
 sed -i -e 's/jdbc:hsqldb:hsqldb-1_7_2/jdbc:hsqldb:hsqldb-2_2_9/' /var/www/sqlmap/hsqldb/src/Register.java
 sed -i -e 's/jdbc:hsqldb:hsqldb-1_7_2/jdbc:hsqldb:hsqldb-2_2_9/' /var/www/sqlmap/hsqldb/src/ViewRecords.java
 javac -classpath /usr/share/tomcat7/lib/servlet-api.jar /var/www/sqlmap/hsqldb/src/*.java
-mv -f /var/www/sqlmap/hsqldb/src/*.class /var/lib/tomcat7/webapps/hsqldb_2_2_9/WEB-INF/classes/.
+mv -f /var/www/sqlmap/hsqldb/src/*.class /var/lib/tomcat7/webapps/hsqldb_2_2_9/WEB-INF/classes/
 
 echo "### Downloading HSQL 1.7.2.11"
 wget http://kent.dl.sourceforge.net/project/hsqldb/hsqldb/hsqldb_1_7_2/hsqldb_1_7_2_11.zip
