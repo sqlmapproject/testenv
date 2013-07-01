@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class ViewRecords extends HttpServlet {
 	Connection con;
-	
+	HashMap methods;
 	@Override
 	public void init() throws ServletException {
 		try {
@@ -29,7 +29,7 @@ public class ViewRecords extends HttpServlet {
 			e.printStackTrace(System.out);
 		}
 		
-		HashMap methods = new HashMap();
+		methods = new HashMap<String,String>();
 		methods.put("str", "select * from contacts where name='%s'");
 		methods.put("int_groupby", "SELECT * FROM contacts GROUP BY %s");
 		methods.put("int_orderby", "SELECT * FROM contacts ORDER BY %s");
@@ -42,7 +42,7 @@ public class ViewRecords extends HttpServlet {
 			String inject = request.getParameter("inject");
 			String method = request.getParameter("method");
 			
-			String query = String.format(methods.get(method), inject);
+			String query = String.format((String)methods.get(method), inject);
 			
 			ResultSet rs =con.createStatement().executeQuery(query);
 			while(rs.next()){
