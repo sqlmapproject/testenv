@@ -11,9 +11,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 public class ViewRecords extends HttpServlet {
 	Connection con;
+	
 	@Override
 	public void init() throws ServletException {
 		try {
@@ -26,13 +28,23 @@ public class ViewRecords extends HttpServlet {
 		} catch (SQLException e) {
 			e.printStackTrace(System.out);
 		}
+		
+		HashMap methods = new HashMap();
+		methods.put("str", "select * from contacts where name='%s'");
+		methods.put("int_groupby", "SELECT * FROM contacts GROUP BY %s");
+		methods.put("int_orderby", "SELECT * FROM contacts ORDER BY %s");
+		methods.put("int_inline", "%s");
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 		PrintWriter out=response.getWriter();
 		try {
-			String name = request.getParameter("name");
-			ResultSet rs =con.createStatement().executeQuery("select * from contacts where name='" + name + "'");
+			String inject = request.getParameter("inject");
+			String method = request.getParameter("method");
+			
+			String query = String.format(methods.get(method), inject);
+			
+			ResultSet rs =con.createStatement().executeQuery(query);
 			while(rs.next()){
 				out.write("<br/>"+rs.getString(1));
 				out.write(", "+rs.getString(2));

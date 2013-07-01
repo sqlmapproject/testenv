@@ -40,6 +40,7 @@ public class Register extends HttpServlet {
 			pst.setString(3, phone);
 			int i=pst.executeUpdate();
 			out.write(i+" records inserted, <a href='ViewRecords?name=" + name + "'>View Records</a>");
+			out.write("</br><a href='test.html'>View Tests</a>");
 		} catch (SQLException e) {
 			throw new ServletException(e);
 		}
