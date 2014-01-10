@@ -4,7 +4,7 @@ aptitude update
 aptitude full-upgrade
 
 echo "### Installing Apache, PHP, git and generic PHP modules"
-aptitude install apache2 libapache2-mod-php5 git php5-dev php5-gd php-pear php5-mysql php5-pgsql php5-sqlite php5-interbase php5-sybase php5-odbc libmdbodbc unzip make libaio1 bc screen htop
+aptitude install apache2 libapache2-mod-php5 git php5-dev php5-gd php-pear php5-mysql php5-pgsql php5-sqlite php5-interbase php5-sybase php5-odbc libmdbodbc1 unzip make libaio1 bc screen htop git subversion sqlite sqlite3
 
 echo "### Configuring Apache and PHP"
 rm /var/www/index.html
@@ -25,13 +25,14 @@ git clone https://github.com/sqlmapproject/testenv.git sqlmap
 
 echo "### Installing MySQL database management system (clients, server, libraries)"
 echo "### NOTE: when asked for a password, type 'testpass'"
-aptitude install mysql-client mysql-server libmysqlclient-dev libmysqld-dev 
+aptitude install mysql-client mysql-server libmysqlclient-dev libmysqld-dev
 update-rc.d mysql defaults
 
 echo "### Initializing MySQL test database and table"
 echo "### NOTE: when asked for a password, type 'testpass'"
-mysql -u root -p mysql < /var/www/sqlmap/schema/mysql.sql 
+mysql -u root -p mysql < /var/www/sqlmap/schema/mysql.sql
 sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/g' /etc/mysql/my.cnf
+service mysql restart
 
 echo "### Installing PostgreSQL database management system (clients, server, libraries)"
 aptitude install postgresql-client postgresql postgresql-server-dev-all libpq-dev 
@@ -45,9 +46,14 @@ passwd -d postgres
 su postgres -c passwd
 psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE testdb;"
 psql -U postgres -h 127.0.0.1 -d testdb -f /var/www/sqlmap/schema/pgsql.sql
-echo "host    all         all         0.0.0.0/0          md5" >> /etc/postgresql/8.4/main/pg_hba.conf
-sed -i "s/listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/8.4/main/postgresql.conf
-sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/8.4/main/postgresql.conf
+echo "host    all         all         0.0.0.0/0          md5" >> /etc/postgresql/9.1/main/pg_hba.conf
+sed -i "s/listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.1/main/postgresql.conf
+sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/9.1/main/postgresql.conf
+service postgresql restart
+
+echo "### Configuring PHP for SQLite 2"
+echo "### NOTE: when asked for a path, provide instantclient,/opt/instantclient_<VERSION>"
+pecl install SQLite
 
 echo "### Initializing Microsoft Access ODBC driver"
 cat << EOF > /etc/odbc.ini
@@ -64,7 +70,7 @@ EOF
 cat << EOF > /etc/odbcinst.ini
 [MDBToolsODBC]
 Description = MDB Tools ODBC drivers
-Driver      = /usr/lib/libmdbodbc.so.0
+Driver      = /usr/lib/i386-linux-gnu/odbc/libmdbodbc.so.1
 Setup       =
 FileUsage   = 1
 CPTimeout   =
@@ -89,7 +95,7 @@ wget https://oss.oracle.com/debian/dists/unstable/non-free/binary-i386/oracle-xe
 dpkg -i oracle-xe_10.2.0.1-1.1_i386.deb
 dpkg -i oracle-xe-client_10.2.0.1-1.2_i386.deb
 echo "### NOTE: when asked for a password, type 'testpass'"
-/etc/init.d/oracle-xe configure
+service oracle-xe configure
 
 echo "### Download the Oracle Basic and SDK Instant Client packages from the OTN Instant Client page, http://www.oracle.com/technetwork/database/features/instant-client/ (e.g. instantclient-basic-linux-11.2.0.3.0.zip and instantclient-sdk-linux-11.2.0.3.0.zip), open a separate shell and unzip them in /opt directory"
 echo "### Hit ENTER when you have done it"
@@ -100,27 +106,34 @@ ln -s libclntsh.so.11.1 libclntsh.so
 echo "### Configuring PHP for Oracle"
 echo "### NOTE: when asked for a path, provide instantclient,/opt/instantclient_<VERSION>"
 pecl install oci8
-echo "extension=oci8.so" > /etc/php5/conf.d/oracle.ini
+echo "extension=oci8.so" > /etc/php5/conf.d/99-oracle.ini
 sed -i 's/\;oci8.privileged_connect = Off/oci8.privileged_connect = On/g' /etc/php5/*/php.ini
 
-echo "### Patching /etc/profile with Oracle related variables"
+echo "### Patching /etc/profile with new and modified environment variables"
 cat << EOF >> /etc/profile
 
 # Oracle
 export ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export ORACLE_SID=XE
 
 # IBM DB2
 export IBM_DB_HOME=/opt/ibm/db2/V9.5
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$IBM_DB_HOME/lib32
+export IBM_DB_LIB=/opt/ibm/db2/V9.5/lib32
 
 # IBM Informix
 export INFORMIXDIR=/opt/IBM/informix
 export INFORMIXSERVER=ol_informix1170
 export ONCONFIG=onconfig.ol_informix1170
 export INFORMIXSQLHOSTS=/opt/IBM/informix/etc/sqlhosts.ol_informix1170
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INFORMIXDIR/lib
+export ODBCINI=/etc/odbc.ini
+#export CLIENT_LOCALE=en_US.8859-1
+
+export LD_LIBRARY_PATH=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/lib:/opt/ibm/db2/V9.5/lib32:/opt/IBM/informix/lib:/opt/IBM/informix/lib/cli:/opt/IBM/informix/lib/esql:/opt/IBM/informix/lib/tools
+EOF
+
+source /etc/profile
+
+cat << EOF >> /etc/profile
 
 # PATH
 export PATH=\$PATH:${ORACLE_HOME}/bin:${IBM_DB_HOME}/bin:${INFORMIXDIR}/bin:${INFORMIXDIR}/extend/krakatoa/jre/bin
@@ -153,25 +166,33 @@ net.core.wmem_default = 262144
 net.core.wmem_max = 1048586
 EOF
 sysctl -p
-aptitude install alien autoconf2.13 binutils build-essential cpp-4.4 debhelper g++-4.4 gawk gcc-4.4 gcc-4.4-base gettext html2text ia32-libs ia32-libs-dev intltool-debian ksh lesstif2 libaio-dev libaio1 libbeecrypt7 libc6 libc6-dev libc6-dev-i386 libdb4.8 libelf-dev libelf1 libltdl-dev libltdl7 libmotif4 libodbcinstq1c2 libqt4-core libqt4-gui libsqlite3-0 libstdc++5 libstdc++6 libstdc++6-4.4-dev lsb lsb-core lsb-cxx lsb-desktop lsb-graphics lsb-qt4 make odbcinst openjdk-6-jdk pax po-debconf rpm rpm-common sysstat tzdata-java unixodbc unixodbc-dev unzip xorg iceweasel
+aptitude install alien autoconf2.13 binutils build-essential cpp-4.4 debhelper g++-4.4 gawk gcc-4.4 gcc-4.4-base gettext html2text ia32-libs-i386 intltool-debian ksh lesstif2 libaio-dev libaio1 libbeecrypt7 libc6 libc6-dev libc6-dev libdb4.8 libelf-dev libelf1 libltdl-dev libltdl7 libodbcinstq4-1 libqt4-core libqt4-gui libsqlite3-0 libstdc++5 libstdc++6 libstdc++6-4.4-dev lsb lsb-core lsb-cxx lsb-desktop lsb-graphics lsb-qt4 make odbcinst openjdk-6-jdk pax po-debconf rpm rpm-common sysstat tzdata-java unixodbc unixodbc-dev unzip xorg iceweasel
 
 echo "### Download IBM DB2 trial from IBM software portal, http://www14.software.ibm.com/webapp/download/preconfig.jsp?id=2007-10-30+16%3A22%3A45.136755R&S_TACT=&S_CMP= and install it in a separate shell"
 echo "### An how-to can be found on http://edin.no-ip.com/blog/hswong3i/ibm-db2-v9-7-apache-2-2-php5-3-debian-squeeze-howto"
 echo "### Hit ENTER when you have done it"
 read enter
 
+cd /tmp
+su -c "/opt/ibm/db2/V9.5/bin/db2 \"CREATE DATABASE testdb\"" db2inst1
+su -c "/opt/ibm/db2/V9.5/bin/db2 < /var/www/sqlmap/schema/db2.sql" db2inst1
+
 echo "### Configuring PHP for IBM DB2"
 echo "### NOTE: when asked for the DB2 installation directory, provide /opt/ibm/db2/V9.5"
 pecl install ibm_db2
-echo "extension=ibm_db2.so" > /etc/php5/conf.d/db2.ini
+echo "extension=ibm_db2.so" > /etc/php5/conf.d/99-db2.ini
 
-echo "### Downloading IBM Informix (client, server)"
-cd /tmp
-wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.b8S61sgMER4Xv-OZtTA_T2rbXlP3haBaZHqUsM_qyQ/Xc.iif.11.70.UC7DE.Linux-RHEL5.tar/Xd./Xf.LPr.D1vk/Xg.6871728/Xi.ifxids/XY.regsrvs/XZ.g9hQ35T595nVz7Ids2e0cBZguOE/iif.11.70.UC7DE.Linux-RHEL5.tar
-tar xvf iif.11.70.UC7DE.Linux-RHEL5.tar
-chmod +x ids_install
 echo "### NOTE: when asked for a password, type 'testpass'"
-./ids_install
+adduser informix
+passwd informix
+
+echo "### Download IBM Informix (client and server) from IBM software portal, https://www14.software.ibm.com/webapp/download/search.jsp?pn=Informix+Dynamic+Server and install it in a separate shell"
+echo "### Hit ENTER when you have done it"
+read enter
+#wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.b8S61sgMER4Xv-OZtTA_T2rbXlP3haBaZHqUsM_qyQ/Xc.iif.11.70.UC7DE.Linux-RHEL5.tar/Xd./Xf.LPr.D1vk/Xg.6871728/Xi.ifxids/XY.regsrvs/XZ.g9hQ35T595nVz7Ids2e0cBZguOE/iif.11.70.UC7DE.Linux-RHEL5.tar
+#tar xvf iif.11.70.UC7DE.Linux-RHEL5.tar
+#chmod +x ids_install
+#./ids_install
 # NOTE: in recent versions, client SDK is part of the server installer
 #wget https://www6.software.ibm.com/sdfdl/2v2/regs2/mstadm/informix/Xa.2/Xb.YBTN_DlRQVtTQcv6rNBKpda1x-zsBonq_4dH2lYTYQ/Xc.clientsdk.3.70.UC5DE.LINUX.tar/Xd./Xf.LPr.D1vk/Xg.6872524/Xi.ifxdl/XY.regsrvs/XZ._9ztqA4zY_TE9mCBH0YaP9Gkl5k/clientsdk.3.70.UC5DE.LINUX.tar
 #tar xvf clientsdk.3.70.UC5DE.LINUX.tar
@@ -179,22 +200,30 @@ echo "### NOTE: when asked for a password, type 'testpass'"
 ln -fs /opt/IBM/informix/etc/sqlhosts.ol_informix1170 /opt/IBM/informix/etc/sqlhosts
 ln -fs /opt/IBM/informix/etc/onconfig.ol_informix1170 /opt/IBM/informix/etc/onconfig
 echo "FULL_DISK_INIT 1" >> /opt/IBM/informix/etc/onconfig
+cat << EOF > /opt/IBM/informix/etc/sqlhosts
+ol_informix1170 onipcshm    localhost       none
+dr_informix1170 onsoctcp    localhost       dr_informix1170
+EOF
 onclean -ky
 oninit -iyv
 
-echo "### Configuring PHP for IBM DB2"
-echo "### NOTE: when asked for the DB2 installation directory, provide /opt/IBM/informix"
+echo "### Initializing Informix test database and table"
+dbaccessdemo7
+isql inf -v < /var/www/sqlmap/schema/informix.sql
+
+echo "### Configuring PHP for IBM Informix"
+echo "### NOTE: when asked for the Informix installation directory, provide /opt/IBM/informix"
 aptitude install php5-dev re2c
 cd /tmp
-wget http://pecl.php.net/get/PDO_INFORMIX-1.3.0.tgz
-tar xvfz PDO_INFORMIX-1.3.0.tgz
+wget http://pecl.php.net/get/PDO_INFORMIX-1.3.1.tgz
+tar xvfz PDO_INFORMIX-1.3.1.tgz
 cd PDO_INFORMIX-1.3.0
 phpize
 ln -s /usr/include/php5 /usr/include/php
 ./configure
 make
 make install
-echo "extension=pdo_informix.so" > /etc/php5/conf.d/pdo_informix.ini
+echo "extension=pdo_informix.so" > /etc/php5/conf.d/99-pdo_informix.ini
 
 # TODO: Add Ingres
 
@@ -209,7 +238,7 @@ cp -r /var/www/sqlmap/hsqldb/ /var/lib/tomcat7/webapps/hsqldb_2_2_9
 echo "### Compiling Java for HSQLDB testbed"
 mkdir /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/classes/
 javac -classpath /usr/share/tomcat7/lib/servlet-api.jar /var/www/sqlmap/hsqldb/src/*.java
-mv -f /var/www/sqlmap/hsqldb/src/*.class /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/classes/.
+mv -f /var/www/sqlmap/hsqldb/src/*.class /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/classes/
 
 # Replace the connection class name and database name for different versions
 mkdir /var/lib/tomcat7/webapps/hsqldb_2_2_9/WEB-INF/classes/
@@ -224,7 +253,7 @@ echo "### Downloading HSQLDB 1.7.2.11"
 wget http://kent.dl.sourceforge.net/project/hsqldb/hsqldb/hsqldb_1_7_2/hsqldb_1_7_2_11.zip
 unzip -q hsqldb_1_7_2_11.zip
 mkdir /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/lib/
-mv -f /tmp/hsqldb/lib/hsqldb.jar /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/lib/.
+mv -f /tmp/hsqldb/lib/hsqldb.jar /var/lib/tomcat7/webapps/hsqldb_1_7_2/WEB-INF/lib/
 rm -rf hsqldb*
 
 echo "### Downloading HSQLDB 2.2.9"
@@ -235,7 +264,7 @@ mv -f /tmp/hsqldb-2.2.9/hsqldb/lib/hsqldb.jar /var/lib/tomcat7/webapps/hsqldb_2_
 rm -rf hsqldb*
 
 echo "### Restarting Tomcat"
-/etc/init.d/tomcat7 restart
+service tomcat7 restart
 
 echo "### Starting DBMS at boot"
 cat << EOF > /etc/rc.local
@@ -258,9 +287,33 @@ su -c /home/db2inst1/sqllib/adm/db2start db2inst1
 # Start IBM Informix at boot
 /opt/IBM/informix/bin/oninit -v
 exit 0
+EOF
 
 echo "### Restarting Apache web server (following installation and setup of PHP modules)"
 service apache2 restart
+
+echo "### Checking out sqlmap source code into /opt/sqlmap"
+git clone https://github.com/sqlmapproject/sqlmap.git /opt/sqlmap
+
+echo "### Installing sqlmap dependencies"
+aptitude install python-setuptools python-dev python-kinterbasdb python-pymssql python-psycopg2 python-pyodbc python-pymssql python-sqlite python-impacket python-jpype
+git clone https://github.com/petehunt/PyMySQL /tmp/PyMySQL
+cd /tmp/PyMySQL
+python setup.py install
+cd /tmp
+wget http://downloads.sourceforge.net/project/cx-oracle/5.1.2/cx_Oracle-5.1.2.tar.gz
+tar xvfz cx_Oracle-5.1.2.tar.gz
+cd cx_Oracle-5.1.2
+python setup.py install
+cd /tmp
+git clone https://code.google.com/p/ibm-db ibm-db
+cd ibm-db/IBM_DB/ibm_db
+python setup.py install
+cd /tmp
+svn checkout http://python-ntlm.googlecode.com/svn/trunk/ python-ntlm
+cd python-ntlm/python26
+python setup.py install
+easy_install jaydebeapi
 
 echo "### Clean up installation"
 aptitude clean
@@ -276,16 +329,18 @@ alias db2conn='db2'
 alias sqliteconn='sqlite /var/www/sqlmap/dbs/sqlite/testdb.sqlite'
 alias sqlite3conn='sqlite3 /var/www/sqlmap/dbs/sqlite/testdb.sqlite3'
 alias firebirdconn='isql-fb -u SYSDBA -p testpass /var/www/sqlmap/dbs/firebird/testdb.fdb'
+alias accessconn='isql testdb -v'
+alias informixconn='isql inf -v'
 
-alias mysqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d mysql://root:testpass@127.0.0.1:3306/testdb --sql-shell -v 6'
-alias pgsqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d postgresql://postgres:testpass@127.0.0.1:5432/testdb --sql-shell -v 6'
-alias oracleconnsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SYS:testpass@127.0.0.1:1521/XE --sql-shell -v 6'
-alias oracleconnscottsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SCOTT:testpass@127.0.0.1:1521/XE --sql-shell -v 6'
-alias db2connsqlmap='python /opt/sqlmap/sqlmap.py -d db2://db2inst1:testpass@127.0.0.1:50000/testdb --sql-shell -v 6'
-alias sqliteconnsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite:///var/www/sqlmap/dbs/sqlite/testdb.sqlite --sql-shell -v 6'
-alias sqlite3connsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite3:///var/www/sqlmap/dbs/sqlite/testdb.sqlite3 --sql-shell -v 6'
-alias firebirdconnsqlmap='python /opt/sqlmap/sqlmap.py -d firebird://SYSDBA:testpass@/var/www/sqlmap/dbs/firebird/testdb.fdb --sql-shell -v 6'
-alias accessconnsqlmap='python /opt/sqlmap/sqlmap.py -d access:///var/www/sqlmap/dbs/access/testdb.mdb --sql-shell -v 6'
+alias mysqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d mysql://root:testpass@127.0.0.1:3306/testdb -b --sql-shell -v 6'
+alias pgsqlconnsqlmap='python /opt/sqlmap/sqlmap.py -d postgresql://postgres:testpass@127.0.0.1:5432/testdb -b --sql-shell -v 6'
+alias oracleconnsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SYS:testpass@127.0.0.1:1521/XE -b --sql-shell -v 6'
+alias oracleconnscottsqlmap='python /opt/sqlmap/sqlmap.py -d oracle://SCOTT:testpass@127.0.0.1:1521/XE -b --sql-shell -v 6'
+alias db2connsqlmap='python /opt/sqlmap/sqlmap.py -d db2://db2inst1:testpass@127.0.0.1:50000/testdb -b --sql-shell -v 6'
+alias sqliteconnsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite:///var/www/sqlmap/dbs/sqlite/testdb.sqlite -b --sql-shell -v 6'
+alias sqlite3connsqlmap='python /opt/sqlmap/sqlmap.py -d sqlite3:///var/www/sqlmap/dbs/sqlite/testdb.sqlite3 -b --sql-shell -v 6'
+alias firebirdconnsqlmap='python /opt/sqlmap/sqlmap.py -d firebird://SYSDBA:testpass@/var/www/sqlmap/dbs/firebird/testdb.fdb -b --sql-shell -v 6'
+alias accessconnsqlmap='python /opt/sqlmap/sqlmap.py -d access:///var/www/sqlmap/dbs/access/testdb.mdb -b --sql-shell -v 6'
 
 alias upgradeall='aptitude update && aptitude -y full-upgrade && aptitude clean && sync'
 EOF
