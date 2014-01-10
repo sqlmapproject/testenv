@@ -1,12 +1,4 @@
-CREATE DATABASE testdb;
-DATABASE testdb;
-
-CREATE TABLE users (
-    id INTEGER,
-    name VARCHAR(500),
-    surname VARCHAR(1000)
-);
-
+CREATE TABLE users (id INTEGER, name TEXT, surname TEXT);
 INSERT INTO users (id, name, surname) VALUES (1, 'luther', 'blisset');
 INSERT INTO users (id, name, surname) VALUES (2, 'fluffy', 'bunny');
 INSERT INTO users (id, name, surname) VALUES (3, 'wu', 'ming');
