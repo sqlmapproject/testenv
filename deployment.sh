@@ -55,29 +55,6 @@ echo "### Configuring PHP for SQLite 2"
 echo "### NOTE: when asked for a path, provide instantclient,/opt/instantclient_<VERSION>"
 pecl install SQLite
 
-echo "### Initializing Microsoft Access ODBC driver"
-cat << EOF > /etc/odbc.ini
-[testdb]
-Description = Microsoft Access Database of testdb
-Driver      = MDBToolsODBC
-Database    = /var/www/sqlmap/dbs/access/testdb.mdb
-Servername  = localhost
-UserName    =
-Password    =
-port        = 4747
-EOF
-
-cat << EOF > /etc/odbcinst.ini
-[MDBToolsODBC]
-Description = MDB Tools ODBC drivers
-Driver      = /usr/lib/i386-linux-gnu/odbc/libmdbodbc.so.1
-Setup       =
-FileUsage   = 1
-CPTimeout   =
-CPReuse     =
-UsageCount  = 1
-EOF
-
 echo "### Installing Firebird database management system (clients, server, libraries)"
 echo "### NOTE: when asked for a password, type 'testpass'"
 aptitude install firebird2.5-super firebird2.5-dev
@@ -224,6 +201,66 @@ ln -s /usr/include/php5 /usr/include/php
 make
 make install
 echo "extension=pdo_informix.so" > /etc/php5/conf.d/99-pdo_informix.ini
+
+echo "### Initializing Microsoft Access and Informix ODBC driver"
+cat << EOF > /etc/odbc.ini
+[ODBC Data Sources]
+testdb=Microsoft Access Database of testdb
+inf=Informix
+
+[testdb]
+Description = Microsoft Access Database of testdb
+Driver      = MDBToolsODBC
+Database    = /var/www/sqlmap/dbs/access/testdb.mdb
+Servername  = localhost
+UserName    =
+Password    =
+port        = 4747
+
+[inf]
+Description=Informix
+Driver=/opt/IBM/informix/lib/cli/iclit09b.so
+Database=stores_demo
+LogonID=informix
+pwd=testpass
+Servername=ol_informix1170
+CursorBehavior=0
+CLIENT_LOCALE=en_US.8859-1
+DB_LOCALE=en_US.819
+TRANSLATIONDLL=/opt/IBM/informix/lib/esql/igo4a304.so
+
+[ODBC]
+UNICODE=UCS-4
+Trace=0
+TraceFile=/tmp/odbctrace.out
+InstallDir=/opt/IBM/informix
+TRACEDLL=idmrs09a.so
+EOF
+
+cat << EOF > /etc/odbcinst.ini
+[ODBC Drivers]
+MDBToolsODBC=Installed
+Informix=Installed
+
+[MDBToolsODBC]
+Description = MDB Tools ODBC drivers
+Driver      = /usr/lib/i386-linux-gnu/odbc/libmdbodbc.so.1
+Setup       =
+FileUsage   = 1
+CPTimeout   =
+CPReuse     =
+UsageCount  = 1
+
+[Informix]
+Driver=/opt/IBM/informix/lib/cli/iclit09b.so
+Setup=/opt/IBM/informix/lib/cli/iclit09b.so
+APILevel=1
+ConnectFunctions=YYY
+DriverODBCVer=03.51
+FileUsage=0
+SQLLevel=1
+smProcessPerConnect=Y
+EOF
 
 # TODO: Add Ingres
 
