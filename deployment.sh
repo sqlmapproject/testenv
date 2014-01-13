@@ -52,8 +52,14 @@ sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/9.1/main/p
 service postgresql restart
 
 echo "### Configuring PHP for SQLite 2"
-echo "### NOTE: when asked for a path, provide instantclient,/opt/instantclient_<VERSION>"
-pecl install SQLite
+wget http://www.spadim.com.br/SQLite-1.0.4.tgz
+tar xvf SQLite-1.0.4.tgz
+cd SQLite-1.0.4
+phpize
+./configure
+make
+make install
+echo "extension=sqlite.so" > /etc/php5/conf.d/99-sqlite2.ini
 
 echo "### Installing Firebird database management system (clients, server, libraries)"
 echo "### NOTE: when asked for a password, type 'testpass'"
