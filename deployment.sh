@@ -19,7 +19,7 @@ update-rc.d apache2 defaults
 echo "### Restarting Apache web server"
 service apache2 restart
 
-echo "### Donwloading sqlmap test environment to /var/www"
+echo "### Downloading sqlmap test environment to /var/www"
 cd /var/www
 git clone https://github.com/sqlmapproject/testenv.git sqlmap
 
