@@ -40,7 +40,7 @@ update-rc.d postgresql defaults
 
 echo "### Initializing PostgreSQL test database and table"
 echo "### NOTE: when asked for a password, type 'testpass'"
-echo "Now type: ALTER USER postgres WITH PASSWORD 'testpass'; - hit RETURN, type \q; - hit RETURN"
+echo "Now type: ALTER USER postgres WITH PASSWORD 'testpass'; - hit RETURN, type \q - hit RETURN"
 su postgres -c psql
 passwd -d postgres
 su postgres -c passwd
