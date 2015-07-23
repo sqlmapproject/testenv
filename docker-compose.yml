@@ -1,0 +1,10 @@
+php:
+  image: andresriancho/testenv:latest
+  ports:
+    - "8998:80"
+
+
+mysql:
+  image: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=testpass
