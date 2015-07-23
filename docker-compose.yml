@@ -4,8 +4,10 @@ mysql:
     - MYSQL_ROOT_PASSWORD=testpass
 
 
-php:
+testenv:
   image: andresriancho/testenv:latest
   ports:
     - "8998:80"
+  links:
+    - mysql
 
