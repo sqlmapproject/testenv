@@ -22,11 +22,9 @@ RUN sed -i 's/extension=suhosin.so/;extension=suhosin.so/g' /etc/php5/conf.d/suh
 # Downloading sqlmap test environment to /var/www
 WORKDIR /var/www
 RUN git clone https://github.com/sqlmapproject/testenv.git sqlmap
+WORKDIR /var/www/sqlmap
 
 # Listen on port 80
 EXPOSE 80
-
-WORKDIR /var/www/sqlmap
-RUN chmod +x /var/www/sqlmap/docker/run.sh
 
 CMD ["/var/www/sqlmap/docker/run.sh"]
