@@ -42,6 +42,6 @@ CREATE USER 'testuser'@'%' identified by 'testpass';
 
 USE mysql;
 
-UPDATE USER SET host='%' WHERE user='root' AND host='localhost';
+UPDATE user SET host='%' WHERE user='root' AND host='localhost';
 GRANT SELECT ON testdb.* TO 'testuser'@'%';
 
