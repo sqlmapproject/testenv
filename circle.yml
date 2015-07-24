@@ -29,7 +29,7 @@ test:
     - sleep 30
 
     # Smoke test
-    - curl http://localhost:8998/mysql/get_int.php?id=1 | grep "luther"
+    - curl http://localhost:8998/sqlmap/mysql/get_int.php?id=1 | grep "luther"
 
 
 deployment:
