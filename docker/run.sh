@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Wait for database to get available
-MYSQL_LOOPS="10"
-MYSQL_HOST="mysql"
+MYSQL_LOOPS="20"
+MYSQL_HOST="mydb"
 MYSQL_PORT="3306"
 
 # Wait for mysql
@@ -19,7 +19,7 @@ done
 
 
 echo "Create the database"
-mysql -u root -ptestpass -h mysql mysql < /var/www/sqlmap/schema/mysql.sql
+mysql -u root -ptestpass -h ${MYSQL_HOST} mysql < /var/www/sqlmap/schema/mysql.sql
 
 
 echo "Start apache"

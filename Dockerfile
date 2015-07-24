@@ -25,8 +25,8 @@ COPY . /var/www/sqlmap/
 WORKDIR /var/www/sqlmap
 
 # Now point the scripts to connect to mysql
-RUN sed -i 's/"localhost"/"mysql"/' /var/www/sqlmap/libs/mysql.inc.php
-RUN sed -i 's/"localhost"/"mysql"/' /var/www/sqlmap/libs/mysql_user.inc.php
+RUN sed -i 's/"localhost"/"mydb"/' /var/www/sqlmap/libs/mysql.inc.php
+RUN sed -i 's/"localhost"/"mydb"/' /var/www/sqlmap/libs/mysql_user.inc.php
 
 # Listen on port 80
 EXPOSE 80
