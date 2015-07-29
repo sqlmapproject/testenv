@@ -25,7 +25,7 @@ dependencies:
 test:
   override:
     # Run the recently built image and mysql
-    - sudo docker-compose --project-name test up -d
+    - sudo docker-compose --project-name test --file docker/docker-compose.yml up -d
     - sleep 30
 
     # Smoke test
