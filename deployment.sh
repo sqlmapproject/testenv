@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+apt-get install -y aptitude
+
 echo "### Updating base system"
-aptitude update
-aptitude full-upgrade
+aptitude -y update
+aptitude -y upgrade
 
 echo "### Installing Apache, PHP, git and generic PHP modules"
-aptitude install apache2 libapache2-mod-php5 git php5-dev php5-gd php-pear php5-mysql php5-pgsql php5-sqlite php5-interbase php5-sybase php5-odbc libmdbodbc1 unzip make libaio1 bc screen htop git subversion sqlite sqlite3
+aptitude install -y apache2 libapache2-mod-php git php-dev php-gd php-pear php-mysql php-pgsql php-sqlite php-interbase php-sybase php-odbc libmdbodbc1 unzip make libaio1 bc screen htop git subversion sqlite sqlite3
 
 echo "### Configuring Apache and PHP"
 rm /var/www/index.html
@@ -12,8 +14,8 @@ mkdir /var/www/test
 chmod 777 /var/www/test
 a2enmod auth_basic auth_digest
 sed -i 's/AllowOverride None/AllowOverride AuthConfig/' /etc/apache2/sites-enabled/*
-sed -i 's/magic_quotes_gpc = On/magic_quotes_gpc = Off/g' /etc/php5/*/php.ini
-sed -i 's/extension=suhosin.so/;extension=suhosin.so/g' /etc/php5/conf.d/suhosin.ini
+sed -i 's/magic_quotes_gpc = On/magic_quotes_gpc = Off/g' /etc/php/*/*/php.ini
+sed -i 's/extension=suhosin.so/;extension=suhosin.so/g' /etc/php/*/conf.d/suhosin.ini
 update-rc.d apache2 defaults
 
 echo "### Restarting Apache web server"
@@ -25,7 +27,7 @@ git clone https://github.com/sqlmapproject/testenv.git sqlmap
 
 echo "### Installing MySQL database management system (clients, server, libraries)"
 echo "### NOTE: when asked for a password, type 'testpass'"
-aptitude install mysql-client mysql-server libmysqlclient-dev libmysqld-dev
+aptitude install -y mysql-client mysql-server libmysqlclient-dev libmysqld-dev
 update-rc.d mysql defaults
 
 echo "### Initializing MySQL test database and table"
@@ -35,7 +37,7 @@ sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/
 service mysql restart
 
 echo "### Installing PostgreSQL database management system (clients, server, libraries)"
-aptitude install postgresql-client postgresql postgresql-server-dev-all libpq-dev 
+aptitude install -y postgresql-client postgresql postgresql-server-dev-all libpq-dev 
 update-rc.d postgresql defaults
 
 echo "### Initializing PostgreSQL test database and table"
@@ -46,9 +48,9 @@ passwd -d postgres
 su postgres -c passwd
 psql -U postgres -h 127.0.0.1 -c "CREATE DATABASE testdb;"
 psql -U postgres -h 127.0.0.1 -d testdb -f /var/www/sqlmap/schema/pgsql.sql
-echo "host    all         all         0.0.0.0/0          md5" >> /etc/postgresql/9.1/main/pg_hba.conf
-sed -i "s/listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.1/main/postgresql.conf
-sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/9.1/main/postgresql.conf
+echo "host    all         all         0.0.0.0/0          md5" >> /etc/postgresql/*/main/pg_hba.conf
+sed -i "s/listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/*/main/postgresql.conf
+sed -i "s/#listen_addresses = /listen_addresses = /g" /etc/postgresql/*/main/postgresql.conf
 service postgresql restart
 
 echo "### Configuring PHP for SQLite 2"
@@ -63,7 +65,7 @@ echo "extension=sqlite.so" > /etc/php5/conf.d/99-sqlite2.ini
 
 echo "### Installing Firebird database management system (clients, server, libraries)"
 echo "### NOTE: when asked for a password, type 'testpass'"
-aptitude install firebird2.5-super firebird2.5-dev
+aptitude install -y firebird2.5-super firebird2.5-dev
 dpkg-reconfigure firebird2.5-super
 update-rc.d firebird2.5-super defaults
 
@@ -149,7 +151,7 @@ net.core.wmem_default = 262144
 net.core.wmem_max = 1048586
 EOF
 sysctl -p
-aptitude install alien autoconf2.13 binutils build-essential cpp-4.4 debhelper g++-4.4 gawk gcc-4.4 gcc-4.4-base gettext html2text ia32-libs-i386 intltool-debian ksh lesstif2 libaio-dev libaio1 libbeecrypt7 libc6 libc6-dev libc6-dev libdb4.8 libelf-dev libelf1 libltdl-dev libltdl7 libodbcinstq4-1 libqt4-core libqt4-gui libsqlite3-0 libstdc++5 libstdc++6 libstdc++6-4.4-dev lsb lsb-core lsb-cxx lsb-desktop lsb-graphics lsb-qt4 make odbcinst openjdk-6-jdk pax po-debconf rpm rpm-common sysstat tzdata-java unixodbc unixodbc-dev unzip xorg iceweasel
+aptitude install -y alien autoconf2.13 binutils build-essential cpp-4.4 debhelper g++-4.4 gawk gcc-4.4 gcc-4.4-base gettext html2text ia32-libs-i386 intltool-debian ksh lesstif2 libaio-dev libaio1 libbeecrypt7 libc6 libc6-dev libc6-dev libdb4.8 libelf-dev libelf1 libltdl-dev libltdl7 libodbcinstq4-1 libqt4-core libqt4-gui libsqlite3-0 libstdc++5 libstdc++6 libstdc++6-4.4-dev lsb lsb-core lsb-cxx lsb-desktop lsb-graphics lsb-qt4 make odbcinst openjdk-6-jdk pax po-debconf rpm rpm-common sysstat tzdata-java unixodbc unixodbc-dev unzip xorg iceweasel
 
 echo "### Download IBM DB2 trial from IBM software portal, http://www14.software.ibm.com/webapp/download/preconfig.jsp?id=2007-10-30+16%3A22%3A45.136755R&S_TACT=&S_CMP= and install it in a separate shell"
 echo "### An how-to can be found on http://edin.no-ip.com/blog/hswong3i/ibm-db2-v9-7-apache-2-2-php5-3-debian-squeeze-howto"
@@ -196,7 +198,7 @@ isql inf -v < /var/www/sqlmap/schema/informix.sql
 
 echo "### Configuring PHP for IBM Informix"
 echo "### NOTE: when asked for the Informix installation directory, provide /opt/IBM/informix"
-aptitude install php5-dev re2c
+aptitude install -y re2c
 cd /tmp
 wget http://pecl.php.net/get/PDO_INFORMIX-1.3.1.tgz
 tar xvfz PDO_INFORMIX-1.3.1.tgz
@@ -339,7 +341,7 @@ echo "### Checking out sqlmap source code into /opt/sqlmap"
 git clone https://github.com/sqlmapproject/sqlmap.git /opt/sqlmap
 
 echo "### Installing sqlmap dependencies"
-aptitude install python-setuptools python-dev python-kinterbasdb python-pymssql python-psycopg2 python-pyodbc python-pymssql python-sqlite python-impacket python-jpype
+aptitude install -y python-setuptools python-dev python-kinterbasdb python-pymssql python-psycopg2 python-pyodbc python-pymssql python-sqlite python-impacket python-jpype
 git clone https://github.com/petehunt/PyMySQL /tmp/PyMySQL
 cd /tmp/PyMySQL
 python setup.py install
