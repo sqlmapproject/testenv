@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian/eol:wheezy
 
 # Updating base system
 RUN apt-get update
